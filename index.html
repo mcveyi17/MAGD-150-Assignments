@@ -48,7 +48,7 @@ void setup()
  keys = new boolean [4]; //keys w, s, up, down
  gameState = 1; //0 = start screen, 1 = game, 2 = end
  leftPaddle = new Paddle(Paddle.paddleDistance, (this.height - Paddle.paddleHeight) / 2);
- rightPaddle = new Paddle(1200 - (Paddle.paddleDistance + Paddle.paddleWidth), (this.height - Paddle.paddleHeight) / 2);
+ rightPaddle = new Paddle(this.width - (Paddle.paddleDistance + Paddle.paddleWidth), (this.height - Paddle.paddleHeight) / 2);
  gameBall = new Ball(20, width / 2, height / 2, 5, 5);
  arrow = loadImage("Arrow.png");
  selectPlayer = true; //arrow on player 1 if true, or 2 if false
