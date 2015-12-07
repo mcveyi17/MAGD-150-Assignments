@@ -8,73 +8,14 @@
   
   <!-- Your sketch goes here -->
   
-int posX = 15;
-int posY = 15;
-int xMovementSize = 8;
-int yMovementSize = 5;
-int ballDiameter = 24;
-
-int r = 200;
-int g = 50;
-int b = 0;
-boolean rIncreasing = true;
-boolean gIncreasing = true;
-boolean bIncreasing = true;
 void setup()
 {
- size(800, 600);
- //background(255);
+  size(800, 600);
 }
 
 void draw()
 {
-  //background(255);
-  fill(r, g, b);
-  ellipse(posX, posY, ballDiameter, ballDiameter);
-  update();
-  //frameRate(600);
-}
-
-void update()
-{
-  if (posX > this.width - (ballDiameter / 2) || posX < 0 + (ballDiameter / 2))
-   xMovementSize *= -1;
-   
-   
-   
-  if (posY > this.height - (ballDiameter / 2) || posY < 0 + (ballDiameter / 2))
-   yMovementSize *= -1;
-   
- posX += xMovementSize;
- posY += yMovementSize;
-
- 
- if(rIncreasing)
- r++;
- else
- r--;
- if (r == 255)
- rIncreasing = false;
- if (r == 0)
- rIncreasing = true;
- 
- if(gIncreasing)
- g++;
- else
- g--;
- if (g == 255)
- gIncreasing = false;
- if (g == 0)
- gIncreasing = true;
- 
- if(bIncreasing)
- b++;
- else
- b--;
- if (b == 255)
- bIncreasing = false;
- if (b == 0)
- bIncreasing = true;
+  ellipse(0, 0, 100, 100);
 }
 
   </script>
