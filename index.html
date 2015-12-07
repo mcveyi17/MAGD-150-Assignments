@@ -2,29 +2,90 @@
   <header>
   <script src="https://raw.githubusercontent.com/processing-js/processing-js/v1.4.8/processing.js"></script>
   </header>
-  <h1>Your Sketch Title</h1>
+  <h1>Hello World!</h1>
   <script type="text/processing" data-processing-target="mycanvas1">
   
   
-  int theta = 0;
-  int diagonalSlide = 0;
-  color newColor;
-  void setup(){
-    size(800, 600); 
+  int leftPosX, rightPosX, posY;
+int ballRadius;
+int leftVelocity, rightVelocity;
+int rValue = 200, gValue = 50, bValue = 0;
+boolean rIncreasing = true, gIncreasing = true, bIncreasing = true;
+
+void setup()
+{
+  size(1000, 600);
+  ballRadius = 20;
+  leftPosX = 100;
+  rightPosX = 700;
+  posY = height / 2;
+  leftVelocity = 1;
+  rightVelocity = -1;
+}
+
+void draw()
+{
+  noStroke();
+  fill(rValue, gValue, bValue);
+  ellipse(leftPosX, posY, ballRadius * 2, ballRadius * 2);
+  ellipse(rightPosX, posY, ballRadius * 2, ballRadius * 2);
+  update();
+}
+
+void update()
+{
+  if (leftPosX - ballRadius <= 0)
+  {
+   if (leftPosX - ballRadius < 0)
+   leftPosX = ballRadius;
+   leftVelocity *= -1;
   }
-  void draw(){
-    if(keyPressed){
-      newColor = round(random(255));
-    }
-    background(newColor);
-    
-    translate(diagonalSlide, diagonalSlide);
-    theta += 10;
-    rotate((theta));
-    rect(0, 0, 200, 200);
-    rect(-200,-200, 200, 200);
-    diagonalSlide++;
+  
+  
+  if (rightPosX + ballRadius >= width)
+  {
+   if (rightPosX + ballRadius > width)
+   rightPosX = width - ballRadius;
+   rightVelocity *= -1;
   }
+  
+  if (leftPosX + ballRadius >= rightPosX - ballRadius)
+  {
+   if (leftPosX + ballRadius > rightPosX - ballRadius)
+   leftPosX = rightPosX - ballRadius * 2;
+   leftVelocity *= -1;
+   rightVelocity *= -1;
+   stroke(0);
+   line(leftPosX + ballRadius, 0, rightPosX - ballRadius, height);
+  }
+  
+  if (rValue == 0 || rValue == 255)
+  rIncreasing = !rIncreasing;
+  
+  if (gValue == 0 || gValue == 255)
+  gIncreasing = !gIncreasing;
+  
+  if (bValue == 0 || bValue == 255)
+  bIncreasing = !bIncreasing;
+  
+  if (rIncreasing)
+  rValue++;
+  else
+  rValue--;
+  
+  if (gIncreasing)
+  gValue++;
+  else
+  gValue--;
+  
+  if (bIncreasing)
+  bValue++;
+  else
+  bValue--;
+  
+  leftPosX += leftVelocity;
+  rightPosX += rightVelocity;
+}
 
   </script>
   <canvas id="mycanvas1"></canvas>
