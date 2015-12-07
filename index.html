@@ -90,8 +90,9 @@ void draw()
       rightPaddle.setColor(rValueL - 30, gValueL - 30, bValueL - 30);
     }
     fill(0);
+    textSize(20);
     text(leftScore, 0, 30);
-    text(rightScore, 600, 30);
+    text(rightScore, width / 2, 30);
     updateGame();
     println(ballCounter);
   }
