@@ -5,87 +5,482 @@
   <h1>Hello World!!!</h1>
   <script type="text/processing" data-processing-target="mycanvas1">
   
-  
-  int leftPosX, rightPosX, posY;
-int ballRadius;
-int leftVelocity, rightVelocity;
-int rValue = 200, gValue = 50, bValue = 0;
-boolean rIncreasing = true, gIncreasing = true, bIncreasing = true;
+ int rValueL = 200;
+int gValueL = 50;
+int bValueL = 0;
+boolean rIncreasing = true;
+boolean gIncreasing = true;
+boolean bIncreasing = true;
+int rValueR = 255 - rValueL;
+int gValueR = 255 - gValueL;
+int bValueR = 255 - bValueL;
+
+boolean keys[];
+int gameState;
+
+Ball gameBall;
+Paddle leftPaddle;
+Paddle rightPaddle;
+
+PImage arrow;
+boolean selectPlayer;
+
+int numPlayers;
+
+Timer gameTimer;
+
+Ball[] ballArr;
+int ballCounter;
+int maxBall;
+
+int leftScore, rightScore;
+
 
 void setup()
 {
-  size(1000, 600);
-  ballRadius = 20;
-  leftPosX = 100;
-  rightPosX = 700;
-  posY = height / 2;
-  leftVelocity = 1;
-  rightVelocity = -1;
+ size(1200, 720);
+ background(255);
+ keys = new boolean [4]; //keys w, s, up, down
+ gameState = 0; //0 = start screen, 1 = game, 2 = end
+ leftPaddle = new Paddle(Paddle.paddleDistance, (this.height - Paddle.paddleHeight) / 2);
+ rightPaddle = new Paddle(1200 - (Paddle.paddleDistance + Paddle.paddleWidth), (this.height - Paddle.paddleHeight) / 2);
+ gameBall = new Ball(20, width / 2, height / 2, 5, 5);
+ arrow = loadImage("Arrow.png");
+ selectPlayer = true; //arrow on player 1 if true, or 2 if false
+ frameRate(60);
+ gameTimer = new Timer(5000);
+ maxBall = 1000;
+ ballArr = new Ball[maxBall];
+ for (int i = 0; i < ballArr.length; i++)
+ {
+   ballArr[i] = new Ball(20, width / 2, height / 2, round(random(5)) + 1, round(random(5)) + 1);
+ }
+ ballCounter = 0;
+ leftScore = 0;
+ rightScore = 0;
 }
 
 void draw()
 {
-  noStroke();
-  fill(rValue, gValue, bValue);
-  ellipse(leftPosX, posY, ballRadius * 2, ballRadius * 2);
-  ellipse(rightPosX, posY, ballRadius * 2, ballRadius * 2);
-  update();
+  if (gameState == 0) //start
+  {
+    background(255);
+    updateStart();
+  }
+  if (gameState == 1) //game
+  {
+    fill(rValueL, gValueL, bValueL);
+    stroke(rValueR, gValueR, bValueR);
+    rect(0, 0, width / 2 - 1, height);
+    fill(rValueR, gValueR, bValueR);
+    stroke(rValueL, gValueL, bValueL);
+    rect(width / 2, 0, width / 2 - 1, height);
+    if (leftScore > round(random(950)) + 50)
+    {
+      leftPaddle.setColor(rValueR - 30, gValueR - 30, bValueR - 30);
+    }
+    if (rightScore > round(random(950)) + 50)
+    {
+      rightPaddle.setColor(rValueL - 30, gValueL - 30, bValueL - 30);
+    }
+    fill(0);
+    text(leftScore, 0, 30);
+    text(rightScore, 600, 30);
+    updateGame();
+    println(ballCounter);
+  }
+  if (gameState == 2) //end
+  {
+    updateEnd();
+  }
+ 
 }
 
-void update()
+void updateStart()
 {
-  if (leftPosX - ballRadius <= 0)
-  {
-   if (leftPosX - ballRadius < 0)
-   leftPosX = ballRadius;
-   leftVelocity *= -1;
-  }
+  fill(0);
+  textSize(50);
+  text("Pong", 525, 200);
+  textSize(25);
+  text("Players:", 535, 400);
+
+  text("1", 500, 450);
+  text("2", 640, 450);
+  if (selectPlayer)
+  image(arrow, 480, 430, 20, 20);
+  else
+  image(arrow, 620, 430, 20, 20);
   
-  
-  if (rightPosX + ballRadius >= width)
-  {
-   if (rightPosX + ballRadius > width)
-   rightPosX = width - ballRadius;
-   rightVelocity *= -1;
-  }
-  
-  if (leftPosX + ballRadius >= rightPosX - ballRadius)
-  {
-   if (leftPosX + ballRadius > rightPosX - ballRadius)
-   leftPosX = rightPosX - ballRadius * 2;
-   leftVelocity *= -1;
-   rightVelocity *= -1;
-   stroke(0);
-   line(leftPosX + ballRadius, 0, rightPosX - ballRadius, height);
-  }
-  
-  if (rValue == 0 || rValue == 255)
+  text("W and S to move P1", 150, 400);
+  text("Up and Down to move P2", 800, 400);
+  text("Esc to exit at any time", 450, 550);
+  text("Left and Right to navigate menu", 380, 600);
+}
+
+void updateGame()
+{
+  rValueR = 255 - rValueL;
+  gValueR = 255 - gValueL;
+  bValueR = 255 - bValueL;
+
+  if (rValueL == 255 || rValueL == 0)
   rIncreasing = !rIncreasing;
   
-  if (gValue == 0 || gValue == 255)
+  if (gValueL == 0 || gValueL == 255)
   gIncreasing = !gIncreasing;
   
-  if (bValue == 0 || bValue == 255)
+  if (bValueL == 0 || bValueL == 255)
   bIncreasing = !bIncreasing;
   
   if (rIncreasing)
-  rValue++;
+  rValueL++;
   else
-  rValue--;
+  rValueL--;
   
   if (gIncreasing)
-  gValue++;
+  gValueL++;
   else
-  gValue--;
+  gValueL--;
   
   if (bIncreasing)
-  bValue++;
+  bValueL++;
   else
-  bValue--;
+  bValueL--;
   
-  leftPosX += leftVelocity;
-  rightPosX += rightVelocity;
+  
+  
+  if (keys[0])
+  {
+    leftPaddle.moveUp();
+  }
+  if (keys[1])
+  {
+    leftPaddle.moveDown();
+  }
+  
+  if (numPlayers == 1)
+  {
+    rightPaddle.auto();
+  }
+  if (numPlayers == 2)
+  {
+    if (keys[2])
+    {
+      rightPaddle.moveUp();
+    }
+    if (keys[3])
+    {
+      rightPaddle.moveDown(); 
+    }
+  }
+
+    
+  leftPaddle.display();
+  rightPaddle.display();
+  
+  gameBall.update();
+  gameBall.display();
+  
+  for (int i = 0; i < ballCounter - 1 && i < ballArr.length; i++)
+  {
+    ballArr[i].update();
+    ballArr[i].display();
+  }
 }
+
+void updateEnd()
+{
+  
+}
+
+void keyPressed()
+{
+ if (keyCode == ESC)
+ {
+   this.exit();
+ }
+ 
+ if (gameState == 0)
+ {
+   if (keyCode == ENTER)
+   {
+     if (selectPlayer)
+     numPlayers = 1;
+     else
+     numPlayers = 2;
+     gameState = 1;
+     gameTimer.timerStart();
+   }
+   
+   if (keyCode == LEFT)
+   selectPlayer = true;
+   if (keyCode == RIGHT)
+   selectPlayer = false;
+ }
+ 
+ if (gameState == 1)
+ {
+   if (key == 'w')
+   keys[0] = true;
+   if (key == 's')
+   keys[1] = true;
+   if (keyCode == UP)
+   keys[2] = true;
+   if (keyCode == DOWN)
+   keys[3] = true; 
+ }
+  
+}
+
+void keyReleased()
+{
+  if (gameState == 1)
+  {
+      if (key == 'w')
+    keys[0] = false;
+    if (key == 's')
+    keys[1] = false;
+    if (keyCode == UP)
+    keys[2] = false;
+    if (keyCode == DOWN)
+    keys[3] = false;
+  }
+}
+
+
+class Ball
+{
+  private int radius, xPos, yPos, xSpeed, ySpeed, defaultSpeedX, defaultSpeedY;
+  private int rand, randR, randG, randB;
+  
+  Ball(int rad, int x, int y, int xSpe, int ySpe)
+  {
+    radius = rad;
+    xPos = x;
+    yPos = y;
+    xSpeed = xSpe;
+    ySpeed = ySpe;
+    defaultSpeedX = xSpe;
+    defaultSpeedY = ySpe;
+  }
+  
+  
+  
+  void update()
+  {
+    if (xPos + 2 * radius >= width || xPos + radius <= 0)
+    {
+      if (xPos + 2 * radius >= width) //right goal
+      {
+        xSpeed = defaultSpeedX * -1;
+        leftScore++;
+      }
+      else //left goal
+      {
+        xSpeed = defaultSpeedX;
+        rightScore++;
+      }
+      xPos = (width + radius) / 2;
+      yPos = (height + radius) / 2;
+      if (ballCounter < maxBall)
+      ballCounter++;
+      //randR = round(random(255));
+      //randG = round(random(255));
+      //randB = round(random(255));
+      rand = floor(random(6));
+
+      switch (rand)
+      {
+        case 0:
+          rValueL = round(random(255));
+          break;
+        case 1:
+          gValueL = round(random(255));
+          break;
+        case 2:
+          bValueL = round(random(255));
+          break;
+        case 3:
+          rValueR = round(random(255));
+          break;
+        case 4:
+          gValueR = round(random(255));
+          break;
+        case 5:
+          bValueR = round(random(255));
+          break;
+      }
+      
+      if (rand % 2 == 0)
+      ySpeed = defaultSpeedY;
+      else
+      ySpeed = defaultSpeedY * -1;
+    }
+  
+    if (yPos + radius >= height || yPos - radius <= 0)
+    ySpeed *= -1;
+  
+    if (xPos <= Paddle.paddleDistance + Paddle.paddleWidth)
+    {
+      if (yPos > leftPaddle.getY() - radius && yPos < leftPaddle.getY() + Paddle.paddleHeight)
+      {
+        xPos = Paddle.paddleDistance + Paddle.paddleWidth;
+        xSpeed *= -1;
+      }
+    }
+    
+    if (xPos >= width - Paddle.paddleDistance - Paddle.paddleWidth - radius)
+    {
+      if (yPos > rightPaddle.getY() - radius && yPos < rightPaddle.getY() + Paddle.paddleHeight)
+      {
+        xPos = width - Paddle.paddleDistance - Paddle.paddleWidth - radius;
+        xSpeed *= -1;
+      }
+    }
+    
+    if (gameTimer.isFinished())
+    {
+      if (xSpeed > 0)
+      xSpeed++;
+      else
+      xSpeed--;
+      if (ySpeed > 0)
+      ySpeed++;
+      else
+      ySpeed--;
+      gameTimer.timerStart();
+    }
+    
+    //text(millis(), 0, 50); //test the amount of time passed
+    xPos += xSpeed;
+    yPos += ySpeed;
+  }
+  
+  void display()
+  {
+    if (xPos > width / 2)
+    fill(rValueL, gValueL, bValueL);
+    else
+    fill(rValueR, gValueR, bValueR);
+    //fill(randR, randG, randB);
+    noStroke();
+    rect(xPos, yPos, radius, radius);
+  }
+  
+  public int getY()
+  {
+    return yPos;
+  }
+  
+  public int getRad()
+  {
+    return radius;
+  }
+}
+
+
+class Paddle
+{
+  private int xPos, yPos, paddleR, paddleG, paddleB;
+  static final int paddleWidth = 25;
+  static final int paddleHeight = 100;
+  static final int paddleDistance = 50;
+  static final int paddleSpeed = 10;
+  
+  Paddle(int x, int y)
+  {
+   xPos = x;
+   yPos = y;
+   paddleR = 0;
+   paddleG = 0;
+   paddleB = 0;
+  }
+  
+  void display()
+  {
+   fill(paddleR, paddleG, paddleB);
+   noStroke();
+   rect(xPos, yPos, paddleWidth, paddleHeight); 
+  }
+  
+  void moveUp()
+  {
+    yPos -= paddleSpeed; 
+    if (yPos < 0)
+    yPos = 0; 
+  }
+  
+  void moveDown()
+  {
+    yPos += paddleSpeed;
+    if (yPos > height - paddleHeight)
+    yPos = height - paddleHeight;
+  }
+  
+    void auto()
+  {
+    if (yPos + paddleHeight / 2 > gameBall.getY())
+    {
+      moveUp();
+    }
+    if (yPos + paddleHeight / 2 < gameBall.getY())
+    {
+      moveDown();
+    }
+  }
+  
+  public void setColor(int r, int g, int b)
+  {
+    paddleR = r;
+    paddleG = g;
+    paddleB = b;
+  }
+  
+  public int getX()
+  {
+    return xPos;
+  }
+  
+  public int getY()
+  {
+    return yPos;
+  }
+  
+}
+
+
+
+class Timer{
+  float startTime, stopTime; // two variables to keep track of the time that the timer starts and length of time for the timer.
+  
+  //constructor. This sets the amount of the time to lapse before it sets the boolean below to true. 
+  // an example use would be 
+  // Timer myTimer = new Timer(2000);    <---- that sets the timer to 2 seconds.
+  Timer(float _stopTime){
+    stopTime = _stopTime;
+  }
+  
+  // you can call this anyway (inside the Setup which would start almost immediately or inside the draw loop, which would make 
+  // it restart ever cycle.
+  void timerStart(){
+    startTime = millis();
+  }
+  
+  // place this in your draw() loop to cheen the time has lapse.
+  // an example block of code might be:
+  //   if (myTimer.isFinished(){
+  //      text("EXPLOSION!", 100, 100);
+  //    }
+  boolean isFinished(){
+    float passedTime = millis() - startTime;
+    if(passedTime > stopTime) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 
   </script>
   <canvas id="mycanvas1"></canvas>
