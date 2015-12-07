@@ -46,7 +46,7 @@ void setup()
  size(1200, 720);
  background(255);
  keys = new boolean [4]; //keys w, s, up, down
- gameState = 0; //0 = start screen, 1 = game, 2 = end
+ gameState = 1; //0 = start screen, 1 = game, 2 = end
  leftPaddle = new Paddle(Paddle.paddleDistance, (this.height - Paddle.paddleHeight) / 2);
  rightPaddle = new Paddle(1200 - (Paddle.paddleDistance + Paddle.paddleWidth), (this.height - Paddle.paddleHeight) / 2);
  gameBall = new Ball(20, width / 2, height / 2, 5, 5);
@@ -60,7 +60,7 @@ void setup()
  {
    ballArr[i] = new Ball(20, width / 2, height / 2, round(random(5)) + 1, round(random(5)) + 1);
  }
- ballCounter = 0;
+ ballCounter = 1;
  leftScore = 0;
  rightScore = 0;
 }
