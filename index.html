@@ -285,6 +285,14 @@ void keyReleased()
   }
 }
 
+void mousePressed()
+{
+  if (mouseY < this.height)
+    leftPaddle.moveUp();
+    else
+    leftPaddle.moveDown();
+}
+
 
 
 class Ball
