@@ -29,7 +29,7 @@ void setup()
  leftPaddle = new Paddle(Paddle.paddleDistance, (this.height - Paddle.paddleHeight) / 2);
  rightPaddle = new Paddle(1200 - (Paddle.paddleDistance + Paddle.paddleWidth), (this.height - Paddle.paddleHeight) / 2);
  gameBall = new Ball(20, width / 2, height / 2, 5, 5);
- arrow = loadImage("Arrow.png");
+ arrow = loadImage("https://cloud.githubusercontent.com/assets/16195612/11828972/c0446cc8-a35e-11e5-81a3-a2813afe5307.png");
  selectPlayer = true; //arrow on player 1 if true, or 2 if false
  frameRate(60);
  gameTimer = new Timer(5000);
